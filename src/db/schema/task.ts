@@ -1,4 +1,5 @@
 import {pgTable,serial,varchar,text,date,timestamp,boolean,index,integer} from "drizzle-orm/pg-core";
+import { users } from "./user";
 export const tasks = pgTable(
   "tasks",
   {
@@ -10,6 +11,7 @@ export const tasks = pgTable(
     start_date: date(),
     due_date: date(),
     status: varchar({ length: 50 }).default("IN_PROGRESS"),
+    created_by: integer().references(() => users.id).notNull(),
     created_at: timestamp().defaultNow().notNull(),
     updated_at: timestamp(),
     deleted_at: timestamp(),
@@ -20,8 +22,6 @@ export const tasks = pgTable(
    
   ]
 );
-
-
 export type Task = typeof tasks.$inferSelect;
 export type NewTask = typeof tasks.$inferInsert;
 export type TasksTable = typeof tasks;
