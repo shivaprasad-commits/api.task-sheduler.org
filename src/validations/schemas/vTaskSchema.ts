@@ -20,6 +20,11 @@ export const VCreateTaskSchema = pipeAsync(
       nonEmpty(TASK_TITLE_MISSING),
       minLength(3, TASK_TITLE_TOO_SHORT),
     ),
+    created_by: pipe(   
+      number(TASK_USER_ID_INVALID),
+      integer(TASK_USER_ID_INVALID),
+      
+    ),
     description: string(TASK_DESC_INVALID), 
     sub_tasks: pipe(
       array(string(TASK_SUBTASKS_INVALID)),

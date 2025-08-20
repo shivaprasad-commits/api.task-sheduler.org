@@ -263,3 +263,6 @@ export const TASK_PROJECT_ID_MISSING = "Project ID is missing";
 export const TASK_START_DATE_MISSING = "Start date is missing";
 export const TASK_DUE_DATE_MISSING = "Due date is missing";
 export const TASK_SUBTASKS_MISSING = "Subtasks are missing";
+export const TASK_CREATED_BY_MISSING = "Created by is missing";
+export const TASK_CREATED_BY_INVALID = "Created by is invalid";
+
