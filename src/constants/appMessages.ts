@@ -245,3 +245,21 @@ export const TOKEN_RESPONSE_NOT_FOUND = "Token response not found in token respo
 
 export const SLACK_ID_INVALID = "slack_id is invalid";
 export const SLACK_ID_MISSING = "slack_id is missing";
+
+//task
+export const TASK_TITLE_INVALID = "Title is invalid";
+export const TASK_TITLE_MISSING = "Title is missing";
+export const TASK_TITLE_TOO_SHORT = "Minimum length of the title is 3 characters";
+export const TASK_DESC_INVALID = "Description is invalid";
+export const TASK_SUBTASKS_INVALID = "Subtasks are invalid";
+export const TASK_STATUS_INVALID = "Status is invalid";
+export const TASK_STATUS_MISSING = "Status is missing";
+export const TASK_START_DATE_INVALID = "Start date is invalid";
+export const TASK_DUE_DATE_INVALID = "Due date is invalid";
+export const TASK_USER_ID_INVALID = "User ID is invalid";
+export const TASK_PROJECT_ID_INVALID = "Project ID is invalid";
+export const TASK_USER_ID_MISSING = "User ID is missing";
+export const TASK_PROJECT_ID_MISSING = "Project ID is missing";
+export const TASK_START_DATE_MISSING = "Start date is missing";
+export const TASK_DUE_DATE_MISSING = "Due date is missing";
+export const TASK_SUBTASKS_MISSING = "Subtasks are missing";
