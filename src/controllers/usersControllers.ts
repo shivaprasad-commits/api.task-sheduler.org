@@ -138,34 +138,34 @@ export class UsersController {
 
     return sendSuccessResp(c, 200, EMPLOYEES_FETCHED, result);
   };
-  //Add user
-  updateInternalUser = async (c: Context) => {
-    const id = +c.req.param("id");
-    const req = await c.req.json();
+  // //Add user
+  // updateInternalUser = async (c: Context) => {
+  //   const id = +c.req.param("id");
+  //   const req = await c.req.json();
 
-    if (!id) {
-      throw new BadRequestException(INVALID_INPUT);
-    }
+  //   if (!id) {
+  //     throw new BadRequestException(INVALID_INPUT);
+  //   }
 
-    const user = await getRecordById<User>(users, id);
-    if (!user || user.deleted_at !== null || user.user_status !== "ACTIVE") {
-      throw new NotFoundException(USER_NOT_FOUND);
-    }
+  //   const user = await getRecordById<User>(users, id);
+  //   if (!user || user.deleted_at !== null || user.user_status !== "ACTIVE") {
+  //     throw new NotFoundException(USER_NOT_FOUND);
+  //   }
 
-    const validatedUser: ValidatedUpdateUser = await validateRequest(
-      "update-user",
-      req,
-      "VUpdateUserSchema"
-    );
+  //   const validatedUser: ValidatedUpdateUser = await validateRequest(
+  //     "update-user",
+  //     req,
+  //     "VUpdateUserSchema"
+  //   );
 
-    const updatedUser = await updateRecordById<User>(users, id, {
-      user_name: validatedUser.user_name,
-      email: validatedUser.email,
-      phone: validatedUser.phone,
-    });
+  //   const updatedUser = await updateRecordById<User>(users, id, {
+  //     user_name: validatedUser.user_name,
+  //     email: validatedUser.email,
+  //     phone: validatedUser.phone,
+  //   });
 
-    return sendSuccessResp(c, 200, USER_UPDATED, updatedUser);
-  };
+  //   return sendSuccessResp(c, 200, USER_UPDATED, updatedUser);
+  // };
   // get single user by id
   getUserById = async (c: Context) => {
     const userId = Number(c.req.param("id"));

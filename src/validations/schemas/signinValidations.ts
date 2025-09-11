@@ -2,9 +2,11 @@
 import type { InferOutput } from "valibot";
 import { email, nonEmpty, object, pipe, pipeAsync, string } from "valibot";
 import { EMAIL_INVALID, EMAIL_MISSING } from "../../constants/appMessages.js";
+import { prepareValibotIssue } from "../prepareValibotIssue.js";
+import { rawTransformAsync } from "valibot";
 
 // custom password validator
-export const VUserSigninSchema = 
+export const VUserSigninSchema = pipeAsync(
   object({
     email: pipe(
       string(EMAIL_INVALID),
@@ -12,19 +14,22 @@ export const VUserSigninSchema =
       email(EMAIL_INVALID)
     ),
     password: pipe(
-      string("Password is required"),
+      string("Invalid password"),
       nonEmpty("Password is required")
     ),
-  })
-
+  }),
   
-//   rawTransformAsync(async ({ dataset, addIssue }) => {
-//   const { password } = dataset.value;
+  rawTransformAsync(async ({ dataset, addIssue }) => {
+  const { password } = dataset.value;
 
-//   if (password !== "123456") {
-//     prepareValibotIssue(dataset, addIssue, "password", password, "password does not match");
-//     return dataset.value;
-//   }
+  if (password !== "123456") {
+    prepareValibotIssue(dataset, addIssue, "password", password, "password doesnot match");
+    return dataset.value;
+  }
+
+  return dataset.value;
+  })
+);
 
 export type ValidatedUserSignin = InferOutput<typeof VUserSigninSchema>;
 
