@@ -106,7 +106,6 @@ async function getPaginatedRecordsConditionally<
       countQuery = countQuery.where(and(...whereConditions));
     }
   }
-
   const recordsCount = await countQuery;
   const total_records = recordsCount[0]?.total || 0;
   const total_pages = Math.ceil(total_records / pageSize) || 1;

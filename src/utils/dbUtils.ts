@@ -51,19 +51,22 @@ function prepareWhereQueryConditions<R extends DBTableRow>(
       else if (columns[i] === "deleted_at") {
         whereQueries.push(isNull(columnInfo));
       }
+      else if (Array.isArray(values[i]) && values[i].length > 0) {
+        whereQueries.push(sql`${columnInfo} in (${sql.join(values[i], sql`, `)})`);
+      }
       else if (typeof values[i] === "object" && values[i] !== null) {
         const value = values[i] as { gte?: Date | string; lte?: Date | string };
 
         if (value.gte && value.lte) {
           whereQueries.push(
-            sql`${columnInfo} BETWEEN ${value.gte} AND ${value.lte}`,
+            sql`${columnInfo} BETWEEN ${value.gte} AND ${value.lte} `,
           );
         }
         else if (value.gte) {
-          whereQueries.push(sql`${columnInfo} >= ${value.gte}`);
+          whereQueries.push(sql`${columnInfo} >= ${value.gte} `);
         }
         else if (value.lte) {
-          whereQueries.push(sql`${columnInfo} <= ${value.lte}`);
+          whereQueries.push(sql`${columnInfo} <= ${value.lte} `);
         }
       }
       else {
@@ -74,7 +77,6 @@ function prepareWhereQueryConditions<R extends DBTableRow>(
     if (orConditions.length > 0) {
       whereQueries.push(sql`(${sql.join(orConditions, sql` OR `)})`);
     }
-
     return whereQueries;
   }
   return null;
@@ -93,31 +95,31 @@ function prepareWhereQueryConditions<R extends DBTableRow>(
 //     const relation = relations?.[i] ?? "=";
 //     switch (relation) {
 //       case "=":
-//         whereQueries.push(sql`${columnInfo} = ${value}`);
+//         whereQueries.push(sql`${ columnInfo } = ${ value } `);
 //         break;
 
 //       case "!=":
-//         whereQueries.push(sql`${columnInfo} != ${value}`);
+//         whereQueries.push(sql`${ columnInfo } != ${ value } `);
 //         break;
 
 //       case "<":
-//         whereQueries.push(sql`${columnInfo} < ${value}`);
+//         whereQueries.push(sql`${ columnInfo } <${ value }`);
 //         break;
 
 //       case "<=":
-//         whereQueries.push(sql`${columnInfo} <= ${value}`);
+//         whereQueries.push(sql`${ columnInfo } <= ${ value } `);
 //         break;
 
 //       case ">":
-//         whereQueries.push(sql`${columnInfo} > ${value}`);
+//         whereQueries.push(sql`${ columnInfo } > ${ value } `);
 //         break;
 
 //       case ">=":
-//         whereQueries.push(sql`${columnInfo} >= ${value}`);
+//         whereQueries.push(sql`${ columnInfo } >= ${ value } `);
 //         break;
 
 //       case "ILIKE":
-//         whereQueries.push(sql`${columnInfo} ILIKE ${value}`);
+//         whereQueries.push(sql`${ columnInfo } ILIKE ${ value } `);
 //         break;
 
 //       case "IS NULL":
@@ -125,23 +127,23 @@ function prepareWhereQueryConditions<R extends DBTableRow>(
 //         break;
 
 //       case "contains":
-//         orQueries.push(sql`${columnInfo} ILIKE ${`%${value}%`}`);
+//         orQueries.push(sql`${ columnInfo } ILIKE ${ `%${value}%` } `);
 //         break;
 
 //       case "@>":
 //         // Used for JSONB contains (e.g., for arrays like visible_to)
-//         whereQueries.push(sql`${columnInfo} @> ${sql.raw(`'[${value}]'::jsonb`)}`);
+//         whereQueries.push(sql`${ columnInfo } @> ${ sql.raw(`'[${value}]'::jsonb`) } `);
 //         break;
 
 //       case "BETWEEN":
 //         if (typeof value === "object" && value !== null && "gte" in value && "lte" in value) {
-//           whereQueries.push(sql`${columnInfo} BETWEEN ${value.gte} AND ${value.lte}`);
+//           whereQueries.push(sql`${ columnInfo } BETWEEN ${ value.gte } AND ${ value.lte } `);
 //         }
 //         break;
 
 //       case "IN":
 //         if (Array.isArray(value) && value.length > 0) {
-//           whereQueries.push(sql`${columnInfo} IN (${sql.join(value, sql`, `)})`);
+//           whereQueries.push(sql`${ columnInfo } IN(${ sql.join(value, sql`, `) })`);
 //         }
 //         else {
 //           whereQueries.push(sql`FALSE`);
@@ -153,7 +155,7 @@ function prepareWhereQueryConditions<R extends DBTableRow>(
 //     }
 //   }
 //   if (orQueries.length > 0) {
-//     whereQueries.push(sql`(${sql.join(orQueries, sql` OR `)})`);
+//     whereQueries.push(sql`(${ sql.join(orQueries, sql` OR `) })`);
 //   }
 //   return whereQueries;
 // }
@@ -181,7 +183,7 @@ function prepareOrderByQueryConditions<R extends DBTableRow>(
     const { columns, values } = orderByQueryData;
     for (let i = 0; i < columns.length; i++) {
       const orderByQuery = sql.raw(
-        `${getTableName(table)}.${columns[i] as string} ${values[i] as string}`,
+        `${getTableName(table)}.${columns[i] as string} ${values[i] as string} `,
       );
       orderByQueries.push(orderByQuery);
     }
@@ -199,7 +201,7 @@ function prepareInQueryCondition<R extends DBTableRow>(
     && inQueryData.values.length > 0
   ) {
     const columnInfo = sql.raw(
-      `${getTableName(table)}.${inQueryData.key as string}`,
+      `${getTableName(table)}.${inQueryData.key as string} `,
     );
     const inQuery = inArray(columnInfo, inQueryData.values);
     return inQuery;

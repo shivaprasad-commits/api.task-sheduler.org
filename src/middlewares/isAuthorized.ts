@@ -57,4 +57,4 @@ const isManagerOrAdmin = createMiddleware(async (c: Context, next) => {
   }
 });
 
-export { isAuthorized, isManagerOrAdmin, isOptionalAuthorized, isEmployee };
+export { isAuthorized, isEmployee, isManagerOrAdmin, isOptionalAuthorized };

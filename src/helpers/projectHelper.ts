@@ -6,9 +6,9 @@ import type { ProjectUser, ProjectWithUsersResponse } from "../types/appTypes.js
 import type { WhereQueryData } from "../types/dbTypes.js";
 
 import { allowedProjectStatus } from "../constants/appMessages.js";
+import { db } from "../db/configuration.js";
 import { projects } from "../db/schema/projects.js";
 import { user_projects } from "../db/schema/userProjects.js";
-import { db } from "../db/configuration.js";
 
 // filters
 export function buildProjectFilters(search?: string, projectStatus?: any): any[] {
@@ -57,56 +57,6 @@ export function mapProjectsWithUsers(projects: any[]): ProjectWithUsersResponse[
   }));
 }
 
-// export function buildProjectsWhereQueryData(
-//   startDate: string | null,
-//   endDate: string | null,
-//   projectStatus: string | null,
-//   searchString: string | null,
-//   user: User,
-// ) {
-//   const whereQueryData: WhereQueryData<Project> = {
-//     columns: ["deleted_at"],
-//     values: [null],
-//   };
-
-//   // Search string filter
-//   if (searchString) {
-//     whereQueryData.columns.push("title");
-//     whereQueryData.values.push(`%${searchString}%`);
-//   }
-
-//   // Project status filter
-//   if (projectStatus?.toUpperCase()) {
-//     whereQueryData.columns.push("project_status");
-//     whereQueryData.values.push(projectStatus.toUpperCase());
-//   }
-
-//   // Date range filter
-//   if (startDate || endDate) {
-//     whereQueryData.columns.push("due_date");
-//     const dateFilter: { gte?: Date; lte?: Date } = {};
-
-//     if (startDate) {
-//       dateFilter.gte = new Date(`${startDate}T00:00:00`);
-//     }
-//     if (endDate) {
-//       dateFilter.lte = new Date(`${endDate}T23:59:59`);
-//     }
-//     whereQueryData.values.push(dateFilter);
-//   }
-
-//   // User-based filtering based on role
-//   if (user.user_type === "EMPLOYEE" || user.user_type === "TL") {
-//     // Employees and Team Leaders can only see projects they're assigned to
-//     // This assumes you have a user_projects junction table or similar
-//     whereQueryData.columns.push("created_by");
-//     whereQueryData.values.push(user.id);
-//   }
-
-//   return whereQueryData;
-// }
-
-
 // Updated buildProjectsWhereQueryData function
 async function getUserAssignedProjectIds(userId: number): Promise<number[]> {
   const userProjects = await db
@@ -115,14 +65,12 @@ async function getUserAssignedProjectIds(userId: number): Promise<number[]> {
     .where(
       and(
         eq(user_projects.user_id, userId),
-        isNull(user_projects.deleted_at)
-      )
+        isNull(user_projects.deleted_at),
+      ),
     );
 
   return userProjects.map(up => up.project_id).filter(id => id !== null) as number[];
 }
-
-
 
 export async function buildProjectsWhereQueryData(
   startDate: string | null,
@@ -159,22 +107,15 @@ export async function buildProjectsWhereQueryData(
     whereQueryData.values.push(dateFilter);
   }
 
-
   if (user.user_type === "EMPLOYEE") {
     const projectIds = await getUserAssignedProjectIds(user.id);
-    console.log('projectIds: ', projectIds);
 
     // Only add the condition if there are project IDs
     if (projectIds.length > 0) {
       whereQueryData.columns.push("id");
-      whereQueryData.values.push({ in: projectIds }); // Use IN condition
-    } else {
-      // If employee has no projects, return empty result by adding impossible condition
-      whereQueryData.columns.push("id");
-      whereQueryData.values.push(-1); // No project will have ID -1
+      whereQueryData.values.push(projectIds); // Use IN condition
     }
   }
 
-  console.log("whereQueryData", whereQueryData);
   return whereQueryData;
 }

@@ -63,63 +63,6 @@ class ProjectController {
     }
   };
 
-  // getAllProjectsPaginated = async (c: Context) => {
-  //   const user = c.get("user_payload");
-
-  //   const page = +c.req.query("page")! || 1;
-  //   const pageSize = +c.req.query("page_size")! || 10;
-  //   const searchString = c.req.query("search_string") || null;
-  //   const orderBy = c.req.query("order_by");
-  //   const projectStatus = c.req.query("project_status") || null;
-  //   const startDate = c.req.query("from_date") || null;
-  //   const endDate = c.req.query("to_date") || null;
-
-  //   let orderByQueryData: OrderByQueryData<Project> = {
-  //     columns: ["created_at"],
-  //     values: ["desc"],
-  //   };
-
-  //   if (orderBy) {
-  //     const orderByColumns: DBTableColumns<Project>[] = [];
-  //     const orderByValues: SortDirection[] = [];
-  //     const queryStrings = orderBy.split(",");
-
-  //     for (const queryString of queryStrings) {
-  //       const [column, value] = queryString.split(":");
-  //       orderByColumns.push(column as DBTableColumns<Project>);
-  //       orderByValues.push(value as SortDirection);
-  //     }
-
-  //     orderByQueryData = {
-  //       columns: orderByColumns,
-  //       values: orderByValues,
-  //     };
-  //   }
-
-  //   const whereQueryData = buildProjectsWhereQueryData(
-  //     startDate,
-  //     endDate,
-  //     projectStatus,
-  //     searchString,
-  //     user,
-  //   );
-
-  //   const columnsToSelect = ["id", "title", "description", "logo_url", "project_status", "start_date", "due_date"] as const;
-
-  //   const result = await getPaginatedRecordsConditionally<Project>(
-  //     projects,
-  //     page,
-  //     pageSize,
-  //     orderByQueryData,
-  //     whereQueryData,
-  //     columnsToSelect,
-  //   );
-
-  //   return sendSuccessResp(c, 200, PROJECTS_FETCHED, result);
-  // };
-
-
-  // Updated getAllProjectsPaginated controller
   getAllProjectsPaginated = async (c: Context) => {
     const user = c.get("user_payload");
 
@@ -160,7 +103,6 @@ class ProjectController {
       searchString,
       user,
     );
-
 
     const columnsToSelect = ["id", "title", "description", "logo_url", "project_status", "start_date", "due_date"] as const;
 
