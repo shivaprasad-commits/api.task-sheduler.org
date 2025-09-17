@@ -23,16 +23,22 @@ const isOptionalAuthorized = createMiddleware(async (c: Context, next) => {
   }
 });
 
-// const isManagerOrAdmin = createMiddleware(async (c: Context, next) => {
-//   const userDetails = await getUserDetailsFromToken(c);
-//   if (userDetails.user_type === "ADMIN" || userDetails.user_type === "MANAGER") {
-//     c.set("user_payload", userDetails);
-//     await next();
-//   }
-//   else {
-//     return sendSuccessResp(c, 401, "Access denied to create project");
-//   }
-// });
+const isEmployee = createMiddleware(async (c: Context, next) => {
+  try {
+    const userDetails = await getUserDetailsFromToken(c);
+
+    if (userDetails.user_type === "EMPLOYEE") {
+      c.set("user_payload", userDetails);
+      await next();
+    }
+    else {
+      return sendErrorResp(c, 403, "Access denied");
+    }
+  }
+  catch (error) {
+    throw error;
+  }
+});
 
 const isManagerOrAdmin = createMiddleware(async (c: Context, next) => {
   try {
@@ -51,4 +57,4 @@ const isManagerOrAdmin = createMiddleware(async (c: Context, next) => {
   }
 });
 
-export { isAuthorized, isManagerOrAdmin, isOptionalAuthorized };
+export { isAuthorized, isManagerOrAdmin, isOptionalAuthorized, isEmployee };
