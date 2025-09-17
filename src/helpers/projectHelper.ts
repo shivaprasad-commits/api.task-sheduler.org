@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 
 import type { Project } from "../db/schema/projects.js";
 import type { User } from "../db/schema/users.js";
@@ -11,8 +11,23 @@ import { projects } from "../db/schema/projects.js";
 import { user_projects } from "../db/schema/userProjects.js";
 
 // filters
-export function buildProjectFilters(search?: string, projectStatus?: any): any[] {
+// export function buildProjectFilters(search?: string, projectStatus?: any): any[] {
+//   const filters: any[] = [isNull(projects.deleted_at)];
+
+//   if (search?.trim()) {
+//     filters.push(sql`LOWER(${projects.title}) LIKE LOWER(${`%${search.trim()}%`})`);
+//   }
+
+//   if (projectStatus && allowedProjectStatus.includes(projectStatus.toUpperCase())) {
+//     filters.push(eq(projects.project_status, projectStatus.toUpperCase() as any));
+//   }
+
+//   return filters;
+// }
+
+export async function buildProjectFilters(search?: string, projectStatus?: any, user?: any): Promise<any[]> {
   const filters: any[] = [isNull(projects.deleted_at)];
+  console.log("user", user);
 
   if (search?.trim()) {
     filters.push(sql`LOWER(${projects.title}) LIKE LOWER(${`%${search.trim()}%`})`);
@@ -20,6 +35,17 @@ export function buildProjectFilters(search?: string, projectStatus?: any): any[]
 
   if (projectStatus && allowedProjectStatus.includes(projectStatus.toUpperCase())) {
     filters.push(eq(projects.project_status, projectStatus.toUpperCase() as any));
+  }
+
+  if (user.user_type === "EMPLOYEE") {
+    const projectIds = await getUserAssignedProjectIds(user.id);
+    console.log('projectIds: ', projectIds);
+
+    // Only add the condition if there are project IDs
+    if (projectIds.length > 0) {
+      // Use inArray for IN condition (assuming you're using Drizzle ORM)
+      filters.push(inArray(projects.id, projectIds));
+    }
   }
 
   return filters;

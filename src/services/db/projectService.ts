@@ -8,7 +8,7 @@ import { db } from "../../db/configuration.js";
 import { projects } from "../../db/schema/projects.js";
 import { Tasks } from "../../db/schema/tasks.js";
 import { user_projects } from "../../db/schema/userProjects.js";
-import { users } from "../../db/schema/users.js";
+import { User, users } from "../../db/schema/users.js";
 import ConflictException from "../../exceptions/conflictException.js";
 import NotFoundException from "../../exceptions/notFoundException.js";
 import { buildOrderByClause, buildProjectFilters } from "../../helpers/projectHelper.js";
@@ -351,8 +351,9 @@ export async function getAllUsersInProjectWithPagination(
   search?: string,
   orderBy?: string,
   projectStatus?: any,
+  user?: any,
 ): Promise<{ result: ProjectWithUsersResponse[]; total_records: number }> {
-  const filters = buildProjectFilters(search, projectStatus);
+  const filters = await buildProjectFilters(search, projectStatus, user);
   const orderByClause = buildOrderByClause(orderBy);
 
   const result: any = await db.query.projects.findMany({

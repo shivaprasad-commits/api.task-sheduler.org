@@ -7,7 +7,7 @@ const projectRouter = new Hono();
 const projectControllers = new ProjectController();
 
 projectRouter.get("/drop-down", projectControllers.getAllProjectsDropDown);
-projectRouter.get("/users", projectControllers.getAllProjectUsersList);
+projectRouter.get("/users", isAuthorized, projectControllers.getAllProjectUsersList);
 projectRouter.get("/status", projectControllers.updateProjectStatusByCron);
 projectRouter.get("/:id/users/assigned", projectControllers.getProjectBasedAssignedUsers);
 projectRouter.get("/:id/users/available", projectControllers.getAllNonExistingUsers);
